@@ -1,36 +1,12 @@
-﻿#install-module azuread
-#import-module azuread
-
-Connect-AzureAD
-
 #install-module msonline
 #import-module msonline
-
 Connect-MsolService
 
-
-$ids = import-csv -Path E:\id.csv
-
-foreach ($id in $ids){
-    Get-AzureADGroupMember -ObjectId $id.id | Out-File -FilePath E:\pmousers.csv -Append
-}
-
-$users = import-csv -Path E:\test.csv
-
+$users = import-csv -Path "PATHTOCSV"
 
 foreach ($user in $users){
-    $license = $null
-    $license = (Get-MsolUser -UserPrincipalName $user.upn).licenses | Where-Object -Property AccountSkuId -EQ GTLCORP:PROJECTPROFESSIONAL -ErrorAction SilentlyContinue
+    $license = (Get-MsolUser -UserPrincipalName $user.COLUMNNAME).licenses | Where-Object -Property AccountSkuId -EQ LICNSENAME -ErrorAction SilentlyContinue
     if ($license -ne $null){
-        $user.upn | out-file E:\project.csv -Append
+        $user.upn | out-file "PATHTOFILE" -Append
     }
 }
-
-foreach ($user in $users){
-    $license = $null
-    $license = (Get-MsolUser -UserPrincipalName $user.upn).licenses | Where-Object -Property AccountSkuId -EQ GTLCORP:VISIOCLIENT -ErrorAction SilentlyContinue
-    if ($license -ne $null){
-        $user.upn | out-file E:\visio.csv -Append
-    }
-}
-
